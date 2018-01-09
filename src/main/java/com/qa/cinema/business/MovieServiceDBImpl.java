@@ -1,19 +1,20 @@
 package com.qa.cinema.business;
 
+import static javax.transaction.Transactional.TxType.REQUIRED;
+import static javax.transaction.Transactional.TxType.SUPPORTS;
+
 import java.util.Collection;
 
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import com.qa.cinema.persistence.Movie;
 import com.qa.cinema.util.JSONUtil;
 
-@Stateless
-@Default
+@Transactional(SUPPORTS)
 public class MovieServiceDBImpl implements MovieService {
 
 	@PersistenceContext(unitName = "primary")
@@ -30,6 +31,7 @@ public class MovieServiceDBImpl implements MovieService {
 	}
 
 	@Override
+	@Transactional(REQUIRED)
 	public String createMovie(String movie) {
 		Movie aMovie = util.getObjectForJSON(movie, Movie.class);
 		manager.persist(aMovie);
@@ -37,6 +39,7 @@ public class MovieServiceDBImpl implements MovieService {
 	}
 
 	@Override
+	@Transactional(REQUIRED)
 	public String updateMovie(Long id, String movie) {
 		Movie updatedMovie = util.getObjectForJSON(movie, Movie.class);
 		Movie movieInDB = findMovie(id);
@@ -48,6 +51,7 @@ public class MovieServiceDBImpl implements MovieService {
 	}
 
 	@Override
+	@Transactional(REQUIRED)
 	public String deleteMovie(Long id) {
 		Movie movieInDB = findMovie(id);
 		if (movieInDB != null) {
